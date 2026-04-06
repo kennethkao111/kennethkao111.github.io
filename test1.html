@@ -1,31 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<style>
-  body { 
-    margin: 0; height: 100vh; 
-    background: url('1920x1080.png') no-repeat center/100% auto #000; 
-  }
-</style>
-<body>
+<html style="background:#000; height:100%">
+<body style="margin:0; height:100%; background:url('1920x1080.png') center/100% auto no-repeat">
 <script>
-  let taps = [];
-  window.onclick = () => {
-    const now = Date.now();
-    taps.push(now);
-    // Keep only taps from the last 5 seconds
-    taps = taps.filter(t => now - t < 5000);
+    let y;
+    const el = document.documentElement;
 
-    const count = taps.length;
-    const isFS = document.fullscreenElement;
+    // Mobile Vertical Swipe
+    window.ontouchstart = e => y = e.touches[0].clientY;
+    window.ontouchend = e => {
+        let d = y - e.changedTouches[0].clientY;
+        if (d > 50) el.requestFullscreen();     /* Swipe Up (Scroll Down) -> Full */
+        if (d < -50) document.exitFullscreen(); /* Swipe Down (Scroll Up) -> Exit */
+    };
 
-    if (count === 3 && !isFS) {
-      document.documentElement.requestFullscreen();
-      taps = []; // Reset after trigger
-    } else if (count === 4 && isFS) {
-      document.exitFullscreen();
-      taps = []; // Reset after trigger
-    }
-  };
+    // Desktop Mouse Wheel
+    window.onwheel = e => {
+        if (e.deltaY > 0) el.requestFullscreen(); /* Scroll Down -> Full */
+        else document.exitFullscreen();           /* Scroll Up -> Exit */
+    };
 </script>
 </body>
 </html>
