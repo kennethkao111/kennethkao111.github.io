@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html style="background:#000; height:100%">
-<body style="margin:0; height:100%; background:url('1920x1080.png') center/100% auto no-repeat">
-<script>
-    let y;
-    const el = document.documentElement;
+<html style="background:#000; height:100%; overflow:hidden">
+<body style="margin:0; height:100%">
+    <video id="v" src="1920x1080_video.mp4" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:contain"></video>
+    <script>
+        let y, el = document.documentElement, v = document.getElementById('v');
 
-    // Mobile Vertical Swipe
-    window.ontouchstart = e => y = e.touches[0].clientY;
-    window.ontouchend = e => {
-        let d = y - e.changedTouches[0].clientY;
-        if (d > 50) el.requestFullscreen();     /* Swipe Up (Scroll Down) -> Full */
-        if (d < -50) document.exitFullscreen(); /* Swipe Down (Scroll Up) -> Exit */
-    };
+        // Mobile Swipe
+        window.ontouchstart = e => y = e.touches[0].clientY;
+        window.ontouchend = e => {
+            let d = y - e.changedTouches[0].clientY;
+            if (d > 50) el.requestFullscreen(); // Swipe Up (Scroll Down) -> Fullscreen
+            if (d < -50) { document.exitFullscreen(); v.muted = false; } // Swipe Down (Scroll Up) -> Exit & Audio
+        };
 
-    // Desktop Mouse Wheel
-    window.onwheel = e => {
-        if (e.deltaY > 0) el.requestFullscreen(); /* Scroll Down -> Full */
-        else document.exitFullscreen();           /* Scroll Up -> Exit */
-    };
-</script>
+        // Desktop Scroll
+        window.onwheel = e => {
+            if (e.deltaY > 0) el.requestFullscreen(); // Scroll Down -> Full
+            else { document.exitFullscreen(); v.muted = false; } // Scroll Up -> Exit & Audio
+        };
+    </script>
 </body>
 </html>
