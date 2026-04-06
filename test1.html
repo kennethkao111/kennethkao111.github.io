@@ -3,98 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen Toggle with Background</title>
+    <title>Fullscreen 1920 Fit</title>
     <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            
-            /* Background Image Setup */
-            background-image: url('1920x1080.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            
-            transition: background-color 0.3s;
+        * {
+            box-sizing: border-box;
         }
 
-        /* Semi-transparent overlay so the button stands out against the image */
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
+        body, html {
+            margin: 0;
+            padding: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.2); /* Darkens the image slightly */
+            background-color: #000; /* Black bars if aspect ratio doesn't match */
+            overflow: hidden; /* Prevents scrollbars in fullscreen */
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1;
+            
+            /* Background logic to fit the full 1920 width */
+            background-image: url('1920x1080.png');
+            background-size: 100% auto; /* Forces image to match screen width */
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         #fs-toggle {
-            position: relative;
-            z-index: 2; /* Keeps button above the overlay */
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 15px 40px;
+            font-size: 20px;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             cursor: pointer;
-            background-color: #ffffff;
-            color: #333;
-            border: none;
-            border-radius: 50px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(5px); /* Modern frosted glass effect */
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
 
         #fs-toggle:hover {
-            background-color: #f0f0f0;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
+            background: rgba(255, 255, 255, 1);
+            color: black;
         }
 
-        #fs-toggle:active {
-            transform: translateY(0);
-        }
-
-        /* Adjustments when in Fullscreen */
-        :fullscreen body {
-            /* The image will automatically scale to the monitor size */
-            background-color: black; 
+        /* Logic for when the browser is actually fullscreen */
+        :fullscreen .container {
+            background-size: contain; /* Ensures the whole image is seen on any monitor */
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay">
-        <button id="fs-toggle">Go Fullscreen</button>
+    <div class="container">
+        <button id="fs-toggle">Enter Fullscreen</button>
     </div>
 
     <script>
-        const toggleBtn = document.getElementById('fs-toggle');
+        const btn = document.getElementById('fs-toggle');
 
-        toggleBtn.addEventListener('click', () => {
+        btn.addEventListener('click', () => {
             if (!document.fullscreenElement) {
-                // Target the whole page (documentElement)
-                document.documentElement.requestFullscreen().catch(err => {
-                    alert(`Error: ${err.message}`);
+                document.documentElement.requestFullscreen().catch(e => {
+                    console.error(`Error: ${e.message}`);
                 });
             } else {
                 document.exitFullscreen();
             }
         });
 
-        // Sync button text with state
         document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                toggleBtn.textContent = "Exit Fullscreen";
-            } else {
-                toggleBtn.textContent = "Go Fullscreen";
-            }
+            btn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Enter Fullscreen";
         });
     </script>
 </body>
