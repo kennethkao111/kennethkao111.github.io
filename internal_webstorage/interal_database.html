@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body style="text-align:center; font-family:sans-serif;">
+    <h1 id="num">0</h1>
+    <button onclick="change(1)">+1</button>
+    <button onclick="change(-1)">-1</button>
+
+    <script>
+        // 1. Load from "database" on startup
+        let count = localStorage.getItem('myCount') || 0;
+        document.getElementById('num').innerText = count;
+
+        function change(val) {
+            // 2. Update logic
+            count = parseInt(count) + val;
+            document.getElementById('num').innerText = count;
+            
+            // 3. Save to "database"
+            localStorage.setItem('myCount', count);
+        }
+    </script>
+</body>
+</html>
