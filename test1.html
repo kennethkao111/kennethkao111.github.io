@@ -1,85 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen 1920 Fit</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000; /* Black bars if aspect ratio doesn't match */
-            overflow: hidden; /* Prevents scrollbars in fullscreen */
-        }
-
-        .container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            
-            /* Background logic to fit the full 1920 width */
-            background-image: url('1920x1080.png');
-            background-size: 100% auto; /* Forces image to match screen width */
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        #fs-toggle {
-            padding: 15px 40px;
-            font-size: 20px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid white;
-            backdrop-filter: blur(5px); /* Modern frosted glass effect */
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        #fs-toggle:hover {
-            background: rgba(255, 255, 255, 1);
-            color: black;
-        }
-
-        /* Logic for when the browser is actually fullscreen */
-        :fullscreen .container {
-            background-size: contain; /* Ensures the whole image is seen on any monitor */
-        }
-    </style>
-</head>
+<style>
+  body { 
+    margin: 0; height: 100vh; 
+    background: url('1920x1080.png') no-repeat center/100% auto #000; 
+  }
+</style>
 <body>
+<script>
+  let taps = [];
+  window.onclick = () => {
+    const now = Date.now();
+    taps.push(now);
+    // Keep only taps from the last 5 seconds
+    taps = taps.filter(t => now - t < 5000);
 
-    <div class="container">
-        <button id="fs-toggle">Enter Fullscreen</button>
-    </div>
+    const count = taps.length;
+    const isFS = document.fullscreenElement;
 
-    <script>
-        const btn = document.getElementById('fs-toggle');
-
-        btn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(e => {
-                    console.error(`Error: ${e.message}`);
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        });
-
-        document.addEventListener('fullscreenchange', () => {
-            btn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Enter Fullscreen";
-        });
-    </script>
+    if (count === 3 && !isFS) {
+      document.documentElement.requestFullscreen();
+      taps = []; // Reset after trigger
+    } else if (count === 4 && isFS) {
+      document.exitFullscreen();
+      taps = []; // Reset after trigger
+    }
+  };
+</script>
 </body>
 </html>
